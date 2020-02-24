@@ -1,8 +1,10 @@
 package com.psych.game;
 
+import com.psych.game.model.Game;
 import com.psych.game.model.GameMode;
 import com.psych.game.model.Player;
 import com.psych.game.model.Question;
+import com.psych.game.repository.GameRepository;
 import com.psych.game.repository.PlayerRepository;
 import com.psych.game.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class HelloWorldController {
     @Autowired
    private QuestionRepository questionRepository;
 
+    @Autowired
+    private GameRepository gameRepository;
+
     @GetMapping("/")
     public  String hello() {
         return "Hello, World";
@@ -31,6 +36,9 @@ public class HelloWorldController {
 
     @GetMapping("/populate")
     public String populateDb() {
+        playerRepository.deleteAll();
+        questionRepository.deleteAll();
+        gameRepository.deleteAll();
         //add some data
         Player luffy = new Player.Builder()
                 .alias("luffy")
@@ -52,7 +60,11 @@ public class HelloWorldController {
         questionRepository.save(new Question("What is the most important Poneglyph",
                     "Rio Poneglyph", GameMode.IS_THIS_A_FACT));
 
-
+        Game game = new Game();
+        game.setGameMode(GameMode.IS_THIS_A_FACT);
+        game.setLeader(luffy);
+        game.getPlayers().add(luffy);
+        gameRepository.save(game);
         return "populated";
     }
 
@@ -73,6 +85,15 @@ public class HelloWorldController {
     @GetMapping("/player/{id}")
     public Optional<Player> getAllPlayers(@PathVariable(name = "id")  Long id) {
         return playerRepository.findById(id);
+    }
+
+    @GetMapping("/games")
+    public List<Game> getAllGames() {
+        return gameRepository.findAll();
+    }
+    @GetMapping("/game/{id}")
+    public Optional<Game> getGameById(@PathVariable(name = "id") Long id) {
+        return gameRepository.findById(id);
     }
 
     //Games

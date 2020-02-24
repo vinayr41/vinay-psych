@@ -1,5 +1,7 @@
 package com.psych.game.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,9 +28,11 @@ public class Player extends User  {
 
     @OneToOne(cascade = CascadeType.ALL)
     @Getter @Setter
+    @JsonManagedReference
     private Stats stats = new Stats();
 
     @ManyToMany(mappedBy = "players")
+    @JsonIdentityReference
     @Getter
     @Setter
     private Set<Game> games = new HashSet<>();

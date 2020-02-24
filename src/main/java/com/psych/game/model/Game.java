@@ -1,7 +1,10 @@
 package com.psych.game.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,9 +14,10 @@ import java.util.*;
 @Table(name = "games")
 public class Game extends Auditable {
     @ManyToMany
+    @JsonIdentityReference
     @Getter
     @Setter
-    Set<Player> players = new HashSet<>();
+    private Set<Player> players = new HashSet<>();
 
     @Setter @Getter
     @Enumerated(EnumType.STRING)
@@ -21,6 +25,9 @@ public class Game extends Auditable {
     private GameMode gameMode;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    @Getter
+    @Setter
+    @JsonManagedReference
     private List<Round> rounds = new ArrayList<>();
 
     @Getter
@@ -35,11 +42,13 @@ public class Game extends Auditable {
     @Getter
     @Setter
     @NotNull
+    @JsonIdentityReference
     private Player leader;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @Getter
     @Setter
+    @JsonManagedReference
     private Map<Player, Stats> playerStats = new HashMap<>();
 
     @Enumerated(EnumType.STRING)
@@ -49,6 +58,8 @@ public class Game extends Auditable {
     @ManyToMany
     @Getter
     @Setter
+    @JsonIdentityReference
+
     private Set<Player> readyPlayers = new HashSet<>();
 
 
