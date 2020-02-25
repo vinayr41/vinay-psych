@@ -1,12 +1,10 @@
-package com.psych.game;
+package com.psych.game.controller;
 
-import com.psych.game.model.Game;
-import com.psych.game.model.GameMode;
-import com.psych.game.model.Player;
-import com.psych.game.model.Question;
+import com.psych.game.model.*;
 import com.psych.game.repository.GameRepository;
 import com.psych.game.repository.PlayerRepository;
 import com.psych.game.repository.QuestionRepository;
+import com.psych.game.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/dev-test")
-public class HelloWorldController {
+public class DevTestController {
 
     @Autowired
     private  PlayerRepository playerRepository ;
@@ -29,6 +27,9 @@ public class HelloWorldController {
     @Autowired
     private GameRepository gameRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("/")
     public  String hello() {
         return "Hello, World";
@@ -36,9 +37,14 @@ public class HelloWorldController {
 
     @GetMapping("/populate")
     public String populateDb() {
+        for(Player player : playerRepository.findAll()) {
+            player.getGames().clear();
+            playerRepository.save(player);
+        }
+
+        gameRepository.deleteAll();
         playerRepository.deleteAll();
         questionRepository.deleteAll();
-        gameRepository.deleteAll();
         //add some data
         Player luffy = new Player.Builder()
                 .alias("luffy")
@@ -95,6 +101,17 @@ public class HelloWorldController {
     public Optional<Game> getGameById(@PathVariable(name = "id") Long id) {
         return gameRepository.findById(id);
     }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @GetMapping("/user/{id}")
+    public Optional<User> getUserById(@PathVariable(name = "id")  Long id) {
+        return userRepository.findById(id);
+    }
+
 
     //Games
     //players

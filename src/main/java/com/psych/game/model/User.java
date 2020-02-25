@@ -1,9 +1,7 @@
 package com.psych.game.model;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -27,8 +25,17 @@ public abstract class User extends Auditable{
     private String saltedHashedPassword;
 
     //roles
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @Getter @Setter
     Set<Role> roles = new HashSet<>();
 
+    public User() {
+
+    }
+
+    public User(User user) {
+        email = user.email;
+        saltedHashedPassword = user.saltedHashedPassword;
+        user.roles = user.getRoles();
+    }
 }
